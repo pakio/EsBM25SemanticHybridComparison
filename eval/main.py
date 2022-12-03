@@ -21,13 +21,13 @@ def main():
     vec = ext_vector(resp)
 
     with col1:
-        st.header("lexical matching")
+        st.header("BM25")
         resp, q = text_search(query)
         render_title_and_url(resp.json())
         st.json(q)
 
     with col2:
-        st.header("semantic matching")
+        st.header("sentence-transformers")
         resp, q = knn_search(vec)
         render_title_and_url(resp.json())
         st.json(q)
@@ -92,14 +92,18 @@ def hybrid_search(query, vector):
     req = {
         "query": {
             "match": {
-                text_field: query
+                text_field:{ 
+                    "query": query,
+                    "boost": 0.5
+                }
             }
         },
         "knn": {
             "field": vector_field,
             "k": 10,
             "num_candidates": 100,
-            "query_vector": vector
+            "query_vector": vector,
+            "boost": 0.5
         },
         "_source": [
             "url",
