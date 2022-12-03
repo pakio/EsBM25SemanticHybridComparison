@@ -1,0 +1,13 @@
+{
+  "processors": [
+    {
+      "inference": {
+        "model_id": "sentence-transformers__msmarco-minilm-l-12-v3",
+        "target_field": "_vector",
+        "field_map": {
+          "title": "text_field"
+        }
+      }
+    }
+  ]
+}
