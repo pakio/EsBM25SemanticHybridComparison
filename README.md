@@ -2,6 +2,8 @@
 
 This is the ready-to-use demo repository to test Elasticsearch semantic search with embedded transformer using ingest pipeline.
 
+![Demo](https://github.com/pakio/EsBM25SemanticHybridComparison/blob/master/demo.gif?raw=true)
+
 - Data
   - wikimedia enwiki 20221201 dump [url](https://dumps.wikimedia.org/enwiki/20221201/)
 - Model
