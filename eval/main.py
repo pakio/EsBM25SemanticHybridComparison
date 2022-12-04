@@ -12,8 +12,12 @@ def main():
     st.set_page_config(layout="wide")
     
     query = st.text_input('query')
+    bm25_weight = st.slider(label='BM25 weight', min_value=0.0, max_value=10.0)
+    vector_weight = st.slider(label='Vector weight', min_value=0.0, max_value=10.0)
+
     if query == "":
-        exit()
+        return
+
     
     col1, col2, col3 = st.columns(3)
 
@@ -34,7 +38,7 @@ def main():
 
     with col3:
         st.header("hybrid search")
-        resp, q = hybrid_search(query, vec)
+        resp, q = hybrid_search(query, vec, bm25_weight, vector_weight)
         render_title_and_url(resp.json())
         st.json(q)
 
@@ -59,8 +63,8 @@ def knn_search(vector):
     req = {
         "knn": {
             "field": vector_field,
-            "k": 10,
-            "num_candidates": 100,
+            "k": 32,
+            "num_candidates": 256,
             "query_vector": vector
         },
         "_source": [
@@ -87,23 +91,23 @@ def text_search(query):
     headers = {'content-type': 'application/json'}
     return requests.post(es_url + path.format(index_name=index_name), data=json.dumps(req), headers=headers), req
 
-def hybrid_search(query, vector):
+def hybrid_search(query, vector, bm25_weight, vector_weight):
     path = "/{index_name}/_search"
     req = {
         "query": {
             "match": {
                 text_field:{ 
                     "query": query,
-                    "boost": 0.5
+                    "boost": bm25_weight
                 }
             }
         },
         "knn": {
             "field": vector_field,
-            "k": 10,
-            "num_candidates": 100,
+            "k": 32,
+            "num_candidates": 256,
             "query_vector": vector,
-            "boost": 0.5
+            "boost": vector_weight
         },
         "_source": [
             "url",
